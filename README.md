@@ -15,5 +15,14 @@ http://godoc.org/github.com/mitchellh/go-wordwrap
 Below is an example of its usage ignoring errors:
 
 ```go
-TODO
+wrapped := wordwrap.WrapString("foo bar baz", 3)
+fmt.Println(wrapped)
+```
+
+Would output:
+
+```
+foo
+bar
+baz
 ```

@@ -34,6 +34,11 @@ func TestWrapString(t *testing.T) {
 			"foo\nb ar\nbaz",
 			4,
 		},
+		{
+			"foo       \nb ar\nbaz",
+			"foo\nb ar\nbaz",
+			4,
+		},
 	}
 
 	for _, tc := range cases {
