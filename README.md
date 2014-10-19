@@ -26,3 +26,14 @@ foo
 bar
 baz
 ```
+
+## Word Wrap Algorithm
+
+This library doesn't use any clever algorithm for word wrapping. The wrapping
+is actually very naive: whenever there is whitespace or an explicit linebreak.
+The goal of this library is for word wrapping CLI output, so the input is
+typically pretty well controlled human language. Because of this, the naive
+approach typically works just fine.
+
+In the future, we'd like to make the algorithm more advanced. We would do
+so without breaking the API.
