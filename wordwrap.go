@@ -36,12 +36,18 @@ func WrapString(s string, lim uint) string {
 			}
 
 			// If this whitespace would put us over the limit, break
-			spaceBuf.WriteRune(char)
 			if current + uint(spaceBuf.Len()) >= lim {
 				goto LINEBREAK
 			}
 
+			spaceBuf.WriteRune(char)
 			continue
+		}
+
+		// If we got a newline, then we honor it and output it. But we have
+		// to reset our limit count.
+		if char == '\n' {
+			goto LINEBREAK
 		}
 
 		// Output our buffered whitespace if we have any
@@ -50,12 +56,6 @@ func WrapString(s string, lim uint) string {
 				panic(err)
 			}
 			current += uint(spaceBuf.Len())
-		}
-
-		// If we got a newline, then we honor it and output it. But we have
-		// to reset our limit count.
-		if char == '\n' {
-			goto LINEBREAK
 		}
 
 		buf.WriteRune(char)
