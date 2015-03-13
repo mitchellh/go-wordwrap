@@ -5,9 +5,9 @@ import (
 )
 
 func TestWrapString(t *testing.T) {
-	cases := []struct{
+	cases := []struct {
 		Input, Output string
-		Lim uint
+		Lim           uint
 	}{
 		{
 			"foo",
@@ -37,6 +37,16 @@ func TestWrapString(t *testing.T) {
 		{
 			"foo       \nb ar\nbaz",
 			"foo\nb ar\nbaz",
+			4,
+		},
+		{
+			"fo sop       \nb ar\n baz",
+			"fo sop\nb ar\n baz",
+			4,
+		},
+		{
+			" This is a list:\n\n\t* foo\n\t* bar\n\n\n\t* baz\nBAM",
+			" This\nis a\nlist:\n\n\t* foo\n\t* bar\n\n\n\t* baz\nBAM",
 			4,
 		},
 	}

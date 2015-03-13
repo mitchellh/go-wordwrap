@@ -15,16 +15,28 @@ func WrapString(s string, lim uint) string {
 	// Initialize a buffer with a slightly larger size to account for breaks
 	init := make([]byte, 0, len(s))
 	buf := bytes.NewBuffer(init)
+	implicit := false
 
 	var current uint
 	var spaceBuf bytes.Buffer
 	for _, char := range s {
 		current++
 
+		// If we got a newline, then we honor it and output it. But we have
+		// to reset our limit count.
+		if char == '\n' {
+			if current == 1 && implicit {
+				current = 0
+				continue
+			}
+			implicit = false
+			goto LINEBREAK
+		}
+
 		// Track the whitespace in our whitespace buffer.
 		if unicode.IsSpace(char) {
 			// Consume any whitespace if we just linebroke implicitly.
-			if current == 1 {
+			if current == 1 && implicit {
 				current = 0
 				continue
 			}
@@ -32,22 +44,18 @@ func WrapString(s string, lim uint) string {
 			// If we're over the limit already, then output a newline
 			// and reset.
 			if current > lim {
+				implicit = true
 				goto LINEBREAK
 			}
 
 			// If this whitespace would put us over the limit, break
-			if current + uint(spaceBuf.Len()) >= lim {
+			if current+uint(spaceBuf.Len()) >= lim {
+				implicit = true
 				goto LINEBREAK
 			}
 
 			spaceBuf.WriteRune(char)
 			continue
-		}
-
-		// If we got a newline, then we honor it and output it. But we have
-		// to reset our limit count.
-		if char == '\n' {
-			goto LINEBREAK
 		}
 
 		// Output our buffered whitespace if we have any
