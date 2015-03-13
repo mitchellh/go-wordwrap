@@ -36,7 +36,7 @@ func WrapString(s string, lim uint) string {
 			}
 
 			// If this whitespace would put us over the limit, break
-			if current + uint(spaceBuf.Len()) >= lim {
+			if current+uint(spaceBuf.Len()) >= lim {
 				goto LINEBREAK
 			}
 
