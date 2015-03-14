@@ -17,54 +17,56 @@ func WrapString(s string, lim uint) string {
 	buf := bytes.NewBuffer(init)
 
 	var current uint
-	var spaceBuf bytes.Buffer
+	var wordBuf, spaceBuf bytes.Buffer
+
 	for _, char := range s {
-		current++
-
-		// Track the whitespace in our whitespace buffer.
-		if unicode.IsSpace(char) {
-			// Consume any whitespace if we just linebroke implicitly.
-			if current == 1 {
-				current = 0
-				continue
+		if char == '\n' {
+			if wordBuf.Len() == 0 {
+				if current+uint(spaceBuf.Len()) > lim {
+					current = 0
+				} else {
+					current += uint(spaceBuf.Len())
+					spaceBuf.WriteTo(buf)
+				}
+				spaceBuf.Reset()
+			} else {
+				current += uint(spaceBuf.Len() + wordBuf.Len())
+				spaceBuf.WriteTo(buf)
+				spaceBuf.Reset()
+				wordBuf.WriteTo(buf)
+				wordBuf.Reset()
 			}
-
-			// If we're over the limit already, then output a newline
-			// and reset.
-			if current > lim {
-				goto LINEBREAK
-			}
-
-			// If this whitespace would put us over the limit, break
-			if current + uint(spaceBuf.Len()) >= lim {
-				goto LINEBREAK
+			buf.WriteRune(char)
+			current = 0
+		} else if unicode.IsSpace(char) {
+			if spaceBuf.Len() == 0 || wordBuf.Len() > 0 {
+				current += uint(spaceBuf.Len() + wordBuf.Len())
+				spaceBuf.WriteTo(buf)
+				spaceBuf.Reset()
+				wordBuf.WriteTo(buf)
+				wordBuf.Reset()
 			}
 
 			spaceBuf.WriteRune(char)
-			continue
-		}
+		} else {
 
-		// If we got a newline, then we honor it and output it. But we have
-		// to reset our limit count.
-		if char == '\n' {
-			goto LINEBREAK
-		}
+			wordBuf.WriteRune(char)
 
-		// Output our buffered whitespace if we have any
-		if spaceBuf.Len() > 0 {
-			if _, err := spaceBuf.WriteTo(buf); err != nil {
-				panic(err)
+			if current+uint(spaceBuf.Len()+wordBuf.Len()) > lim && uint(wordBuf.Len()) < lim {
+				buf.WriteRune('\n')
+				current = 0
+				spaceBuf.Reset()
 			}
-			current += uint(spaceBuf.Len())
 		}
+	}
 
-		buf.WriteRune(char)
-
-		continue
-	LINEBREAK:
-		buf.WriteRune('\n')
-		current = 0
-		spaceBuf.Reset()
+	if wordBuf.Len() == 0 {
+		if current+uint(spaceBuf.Len()) <= lim {
+			spaceBuf.WriteTo(buf)
+		}
+	} else {
+		spaceBuf.WriteTo(buf)
+		wordBuf.WriteTo(buf)
 	}
 
 	return buf.String()
