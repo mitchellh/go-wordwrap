@@ -41,6 +41,12 @@ func TestWrapString(t *testing.T) {
 			"fo\nsop",
 			4,
 		},
+		// Do not break on non-breaking space.
+		{
+			"foo bar\u00A0baz",
+			"foo\nbar\u00A0baz",
+			10,
+		},
 		// Whitespace that trails a line and fits the width
 		// passes through, as does whitespace prefixing an
 		// explicit line break. A tab counts as one character.
