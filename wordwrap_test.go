@@ -77,7 +77,7 @@ func TestWrapString(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		actual := WrapString(tc.Input, tc.Lim)
+		actual := WrapString(tc.Input, tc.Lim, false)
 		if actual != tc.Output {
 			t.Fatalf("Case %d Input:\n\n`%s`\n\nActual Output:\n\n`%s`", i, tc.Input, actual)
 		}
