@@ -5,6 +5,8 @@ import (
 	"unicode"
 )
 
+const nbsp = 0xA0
+
 // WrapString wraps the given string within lim width in characters.
 //
 // Wrapping is currently naive and only happens at white-space. A future
@@ -42,7 +44,7 @@ func WrapString(s string, lim uint) string {
 			}
 			buf.WriteRune(char)
 			current = 0
-		} else if unicode.IsSpace(char) {
+		} else if unicode.IsSpace(char) && char != nbsp {
 			if spaceBuf.Len() == 0 || wordBuf.Len() > 0 {
 				current += spaceBufLen + wordBufLen
 				spaceBuf.WriteTo(buf)
