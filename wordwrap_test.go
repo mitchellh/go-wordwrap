@@ -1,6 +1,7 @@
 package wordwrap
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -74,12 +75,19 @@ func TestWrapString(t *testing.T) {
 			" This\nis a\nlist: \n\n\t* foo\n\t* bar\n\n\n\t* baz\nBAM",
 			6,
 		},
+		// Multi-byte characters
+		{
+			strings.Repeat("\u2584 ", 4),
+			"\u2584 \u2584" + "\n" +
+				strings.Repeat("\u2584 ", 2),
+			4,
+		},
 	}
 
 	for i, tc := range cases {
 		actual := WrapString(tc.Input, tc.Lim)
 		if actual != tc.Output {
-			t.Fatalf("Case %d Input:\n\n`%s`\n\nActual Output:\n\n`%s`", i, tc.Input, actual)
+			t.Fatalf("Case %d Input:\n\n`%s`\n\nExpected Output:\n\n`%s`\n\nActual Output:\n\n`%s`", i, tc.Input, tc.Output, actual)
 		}
 	}
 }

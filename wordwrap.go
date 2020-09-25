@@ -18,50 +18,58 @@ func WrapString(s string, lim uint) string {
 
 	var current uint
 	var wordBuf, spaceBuf bytes.Buffer
+	var wordBufLen, spaceBufLen uint
 
 	for _, char := range s {
 		if char == '\n' {
 			if wordBuf.Len() == 0 {
-				if current+uint(spaceBuf.Len()) > lim {
+				if current+spaceBufLen > lim {
 					current = 0
 				} else {
-					current += uint(spaceBuf.Len())
+					current += spaceBufLen
 					spaceBuf.WriteTo(buf)
 				}
 				spaceBuf.Reset()
+				spaceBufLen = 0
 			} else {
-				current += uint(spaceBuf.Len() + wordBuf.Len())
+				current += spaceBufLen + wordBufLen
 				spaceBuf.WriteTo(buf)
 				spaceBuf.Reset()
+				spaceBufLen = 0
 				wordBuf.WriteTo(buf)
 				wordBuf.Reset()
+				wordBufLen = 0
 			}
 			buf.WriteRune(char)
 			current = 0
 		} else if unicode.IsSpace(char) {
 			if spaceBuf.Len() == 0 || wordBuf.Len() > 0 {
-				current += uint(spaceBuf.Len() + wordBuf.Len())
+				current += spaceBufLen + wordBufLen
 				spaceBuf.WriteTo(buf)
 				spaceBuf.Reset()
+				spaceBufLen = 0
 				wordBuf.WriteTo(buf)
 				wordBuf.Reset()
+				wordBufLen = 0
 			}
 
 			spaceBuf.WriteRune(char)
+			spaceBufLen++
 		} else {
-
 			wordBuf.WriteRune(char)
+			wordBufLen++
 
-			if current+uint(spaceBuf.Len()+wordBuf.Len()) > lim && uint(wordBuf.Len()) < lim {
+			if current+wordBufLen+spaceBufLen > lim && wordBufLen < lim {
 				buf.WriteRune('\n')
 				current = 0
 				spaceBuf.Reset()
+				spaceBufLen = 0
 			}
 		}
 	}
 
 	if wordBuf.Len() == 0 {
-		if current+uint(spaceBuf.Len()) <= lim {
+		if current+spaceBufLen <= lim {
 			spaceBuf.WriteTo(buf)
 		}
 	} else {
