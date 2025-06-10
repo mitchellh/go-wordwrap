@@ -8,7 +8,7 @@ import (
 func TestWrapString(t *testing.T) {
 	cases := []struct {
 		Input, Output, BreakSeq string
-		Lim           uint
+		Lim                     uint
 	}{
 		// A simple word passes through.
 		{
