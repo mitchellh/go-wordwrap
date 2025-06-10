@@ -7,13 +7,14 @@ import (
 
 const nbsp = 0xA0
 
-// WrapString wraps the given string within lim width in characters.
+// WrapString wraps the given string within `lim` width in characters.
+// The `breakSeq` argument defines the string to insert when wrapping.
 //
 // Wrapping is currently naive and only happens at white-space. A future
 // version of the library will implement smarter wrapping. This means that
 // pathological cases can dramatically reach past the limit, such as a very
 // long word.
-func WrapString(s string, lim uint) string {
+func WrapString(s string, lim uint, breakSeq string) string {
 	// Initialize a buffer with a slightly larger size to account for breaks
 	init := make([]byte, 0, len(s))
 	buf := bytes.NewBuffer(init)
@@ -62,7 +63,7 @@ func WrapString(s string, lim uint) string {
 			wordBufLen++
 
 			if current+wordBufLen+spaceBufLen > lim && wordBufLen < lim {
-				buf.WriteRune('\n')
+				buf.WriteString(breakSeq)
 				current = 0
 				spaceBuf.Reset()
 				spaceBufLen = 0

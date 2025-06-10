@@ -15,7 +15,7 @@ http://godoc.org/github.com/mitchellh/go-wordwrap
 Below is an example of its usage ignoring errors:
 
 ```go
-wrapped := wordwrap.WrapString("foo bar baz", 3)
+wrapped := wordwrap.WrapString("foo bar baz", 3, "\n")
 fmt.Println(wrapped)
 ```
 
@@ -25,6 +25,19 @@ Would output:
 foo
 bar
 baz
+```
+
+```go
+str := "curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg"
+wrapped := wordwrap.WrapString(str, 80, " \\\n")
+fmt.Println(wrapped)
+```
+
+Would output:
+
+```sh
+curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o \
+/etc/apt/keyrings/charm.gpg
 ```
 
 ## Word Wrap Algorithm
