@@ -69,10 +69,16 @@ func TestWrapString(t *testing.T) {
 			"foo\nbar\nbaz\n",
 			4,
 		},
-		// Explicit break are always preserved.
+		// Explicit breaks are always preserved.
 		{
 			"\nfoo bar\n\n\nbaz\n",
 			"\nfoo\nbar\n\n\nbaz\n",
+			4,
+		},
+		// Empty string
+		{
+			"",
+			"",
 			4,
 		},
 		// Complete example:
